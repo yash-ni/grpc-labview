@@ -320,18 +320,37 @@ LIBRARY_EXPORT int32_t ClientUnaryCall(
         return e.code;
     }
 
+    clientCall->_is_active = true;
+
     clientCall->_runFuture = std::async(
         std::launch::async, 
         [clientCall]() 
         {
             grpc::internal::RpcMethod method(clientCall->_methodName.c_str(), grpc::internal::RpcMethod::NORMAL_RPC);
-            clientCall->_status = grpc::internal::BlockingUnaryCall(clientCall->_client->Channel.get(), method, &(clientCall->_context.get()->gRPCClientContext) , *clientCall->_request.get(), clientCall->_response.get());
-            CheckActiveAndSignalOccurenceForClientCall(clientCall);
-            return 0;
+            clientCall->_status = grpc::internal::BlockingUnaryCall(clientCall->_client->Channel.get(), method, &(clientCall->_context.get()->gRPCClientContext), *clientCall->_request.get(), clientCall->_response.get());
+            // CheckActiveAndSignalOccurenceForClientCall(clientCall);
+            // CheckActiveAndSignalConditionalVariableForClientCall(clientCall);
+            clientCall->_is_active = false;
+            clientCall->_condition.notify_one();
         });
 
     std::lock_guard<std::mutex> lock(client->clientLock);
     client->ActiveClientCalls.push_back(clientCall);
+    return 0;
+}
+
+
+LIBRARY_EXPORT int32_t WaitOnConditionalVariable(
+    grpc_labview::gRPCid* callId)
+{
+    auto call = callId->CastTo<grpc_labview::ClientCall>();
+    if (!call)
+    {
+        return -1;
+    }
+    std::unique_lock<std::mutex> lock(call->_client->clientLock);
+    call->_condition.wait(lock, [&call]()
+        { return (call->_is_active == false); });
     return 0;
 }
 
