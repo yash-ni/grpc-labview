@@ -33,14 +33,14 @@ namespace grpc_labview
 
         const char* _InternalParse(const char* ptr, google::protobuf::internal::ParseContext* ctx)  override final;
         google::protobuf::uint8* _InternalSerialize(google::protobuf::uint8* target, google::protobuf::io::EpsCopyOutputStream* stream) const override final;
-        void SetCachedSize(int size) const final;
-        int GetCachedSize(void) const final;
-        size_t ByteSizeLong() const final;
+        void SetCachedSize(int size) const ;
+        int GetCachedSize(void) const ;
+        size_t ByteSizeLong() const ;
         virtual void PostInteralParseAction() {};
         
         void MergeFrom(const google::protobuf::Message &from) final;
         void MergeFrom(const LVMessage &from);
-        void CopyFrom(const google::protobuf::Message &from) final;
+        void CopyFrom(const google::protobuf::Message &from) ;
         void CopyFrom(const LVMessage &from);
         void InternalSwap(LVMessage *other);
         google::protobuf::Metadata GetMetadata() const final;

@@ -77,7 +77,7 @@ namespace grpc_labview
             auto _repeatedStringValuesIt = _repeatedStringValuesMap.find(fieldInfo.fieldName);
             if (_repeatedStringValuesIt == _repeatedStringValuesMap.end())
             {
-                _repeatedStringValuesIt = _repeatedStringValuesMap.emplace(fieldInfo.fieldName, google::protobuf::RepeatedField<std::string>()).first;
+                _repeatedStringValuesIt = _repeatedStringValuesMap.emplace(fieldInfo.fieldName, google::protobuf::RepeatedPtrField<std::string>()).first;
             }
 
             protobuf_ptr -= 1;

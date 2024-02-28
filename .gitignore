@@ -10,8 +10,7 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 gens
-grpc
-
+third_party/grpc
 Builds
 build
 .vs
@@ -33,3 +32,5 @@ labview source/Servers/Generated Server/
 
 *.so
 tests/gRPC_ATS/TimeStamp.txt
+build_64
+build_32

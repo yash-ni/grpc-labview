@@ -8,6 +8,7 @@
 #include <message_metadata.h>
 #include <google/protobuf/message.h>
 #include "lv_message.h"
+#include <type_traits>
 
 using namespace google::protobuf::internal;
 
@@ -15,6 +16,13 @@ namespace grpc_labview
 {
     //---------------------------------------------------------------------
     //---------------------------------------------------------------------
+
+    template <typename T>
+    struct is_std_string : std::false_type {};
+
+    template <>
+    struct is_std_string<std::string> : std::true_type {};
+
     class LVMessageEfficient : public LVMessage
     {
     public:
@@ -37,7 +45,7 @@ namespace grpc_labview
     public:
         std::unordered_map<std::string, uint32_t> _repeatedField_continueIndex;
         std::unordered_map<std::string, std::shared_ptr<RepeatedMessageValue>> _repeatedMessageValuesMap;
-        std::unordered_map<std::string, google::protobuf::RepeatedField<std::string>> _repeatedStringValuesMap;
+        std::unordered_map<std::string, google::protobuf::RepeatedPtrField<std::string>> _repeatedStringValuesMap;
 
     protected:
         const char *ParseBoolean(const MessageElementMetadata& fieldInfo, uint32_t index, const char *ptr, google::protobuf::internal::ParseContext *ctx);
@@ -61,6 +69,9 @@ namespace grpc_labview
 
     template <typename MessageType, const char* (*ReadFunc)(const char*, MessageType*), const char* (*PackedFunc)(void*, const char*, google::protobuf::internal::ParseContext*)>
     class SinglePassMessageParser {
+    
+    static_assert(!is_std_string<MessageType>::value, "std::string is not allowed in this template");
+    
     private:
         LVMessage& _message;
         const char* _lv_ptr;
