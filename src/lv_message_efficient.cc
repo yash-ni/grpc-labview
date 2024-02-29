@@ -142,7 +142,7 @@ namespace grpc_labview
             auto _repeatedMessageValuesIt = _repeatedMessageValuesMap.find(metadata->messageName);
             if (_repeatedMessageValuesIt == _repeatedMessageValuesMap.end())
             {
-                auto m_val = std::make_shared<RepeatedMessageValue>(fieldInfo, google::protobuf::RepeatedField<char>());
+                auto m_val = std::make_shared<RepeatedMessageValue>(fieldInfo, google::protobuf::RepeatedPtrField<std::string>());
                 _repeatedMessageValuesIt = _repeatedMessageValuesMap.emplace(metadata->messageName, m_val).first;
             }
 
@@ -159,7 +159,7 @@ namespace grpc_labview
             }
             else {
                 // occurs on the first time this function is called
-                _repeatedMessageValuesIt->second.get()->_buffer.Resize(arraySize, _fillData);
+                _repeatedMessageValuesIt->second.get()->_buffer.Reserve(numElements);
             }
 
             protobuf_ptr -= 1;
@@ -171,13 +171,13 @@ namespace grpc_labview
                 if (elementIndex >= numElements - 1) {
                     numElements *= 2;
                     arraySize = numElements * clusterSize;
-                    auto s = _repeatedMessageValuesIt->second.get()->_buffer.size();
-                    _repeatedMessageValuesIt->second.get()->_buffer.Resize(arraySize, _fillData);
+                    auto& repeatedField = _repeatedMessageValuesIt->second.get()->_buffer;
+                    repeatedField.Reserve(numElements);
                 }
 
                 auto _vectorPtr = _repeatedMessageValuesIt->second.get()->_buffer.data();
                 _vectorPtr = _vectorPtr + (elementIndex * clusterSize);
-                nestedMessage.SetLVClusterHandle(_vectorPtr);
+                nestedMessage.SetLVClusterHandle(reinterpret_cast<const char*>(_vectorPtr));
                 protobuf_ptr = ctx->ParseMessage(&nestedMessage, protobuf_ptr);
 
                 elementIndex++;
