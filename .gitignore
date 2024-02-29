@@ -10,7 +10,7 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 gens
-third_party/grpc
+# third_party/grpc
 Builds
 build
 .vs
