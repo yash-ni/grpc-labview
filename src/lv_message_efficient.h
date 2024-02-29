@@ -17,12 +17,6 @@ namespace grpc_labview
     //---------------------------------------------------------------------
     //---------------------------------------------------------------------
 
-    template <typename T>
-    struct is_std_string : std::false_type {};
-
-    template <>
-    struct is_std_string<std::string> : std::true_type {};
-
     class LVMessageEfficient : public LVMessage
     {
     public:
@@ -69,9 +63,7 @@ namespace grpc_labview
 
     template <typename MessageType, const char* (*ReadFunc)(const char*, MessageType*), const char* (*PackedFunc)(void*, const char*, google::protobuf::internal::ParseContext*)>
     class SinglePassMessageParser {
-    
-    static_assert(!is_std_string<MessageType>::value, "std::string is not allowed in this template");
-    
+        
     private:
         LVMessage& _message;
         const char* _lv_ptr;

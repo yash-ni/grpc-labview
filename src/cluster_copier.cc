@@ -687,7 +687,7 @@ namespace grpc_labview {
                 for (int x = 0; x < (*array)->cnt; ++x)
                 {
                     auto str = GetLVString(*lvStr);
-                    // repeatedStringValue->_value.Add(str);
+                    // repeatedStringValue->_value.Add(&str);
                     repeatedStringValue->_value.Add()->assign(str);
                     lvStr += 1;
                 }
