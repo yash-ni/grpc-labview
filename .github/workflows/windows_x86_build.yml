@@ -32,13 +32,11 @@ jobs:
 
     - name: Configure CMake
       working-directory: ${{runner.workspace}}\grpc-labview\build
-      run: | 
-        cmake -DCMAKE_SYSTEM_VERSION=10.0.22621.3235 -A Win32 ..
+      run: cmake -G "Visual Studio 16 2019" -A Win32 ..
       
     - name: Build
       working-directory: ${{runner.workspace}}\grpc-labview\build
-      run: | 
-        cmake -DCMAKE_SYSTEM_VERSION=10.0.22621.3235 --build . --config ${{env.BUILD_TYPE}} -j 16
+      run: cmake --build . --config ${{env.BUILD_TYPE}} -j 16
 
     - if: ${{ always() }}
       name: Print CMakeTests logs
