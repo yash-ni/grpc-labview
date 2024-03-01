@@ -22,13 +22,12 @@ endif()
 # set(utf8_range_ENABLE_INSTALL OFF)
 set(ABSL_ENABLE_INSTALL ON)
 
+message(STATUS "Modifying Protobuf's CMakeLists.txt ...")
 execute_process(
-    COMMAND ${CMAKE_COMMAND} -E echo "Modifying Protobuf's CMakeLists.txt ..."
     COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/modifyProtobufCMakeLists.py
     RESULT_VARIABLE modify_command_result
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
-
 if(modify_command_result)
     message(FATAL_ERROR "Failed to run the configure script. Aborting configuration.")
 endif()
