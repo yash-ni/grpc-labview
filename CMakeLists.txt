@@ -1,6 +1,6 @@
 #----------------------------------------------------------------------
 #----------------------------------------------------------------------
-cmake_minimum_required(VERSION 3.5.1)
+cmake_minimum_required(VERSION 3.15)
 
 cmake_policy(SET CMP0091 NEW)
 
@@ -10,8 +10,7 @@ if(NOT MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 else()
   add_definitions(-D_WIN32_WINNT=0x600)
-  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>" CACHE STRING "MSVC runtime library" FORCE)
-  set(protobuf_MSVC_STATIC_RUNTIME ON)
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4267 /wd4244")
   add_compile_options("$<$<NOT:$<CONFIG:Debug>>:/Zi>")
   add_link_options("$<$<NOT:$<CONFIG:Debug>>:/DEBUG>")
@@ -22,6 +21,17 @@ endif()
 # set(protobuf_INSTALL OFF)
 # set(utf8_range_ENABLE_INSTALL OFF)
 set(ABSL_ENABLE_INSTALL ON)
+
+execute_process(
+    COMMAND ${CMAKE_COMMAND} -E echo "Modifying Protobuf's CMakeLists.txt ..."
+    COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/modifyProtobufCMakeLists.py
+    RESULT_VARIABLE modify_command_result
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+if(modify_command_result)
+    message(FATAL_ERROR "Failed to run the configure script. Aborting configuration.")
+endif()
 
 find_package(Threads REQUIRED)
 
