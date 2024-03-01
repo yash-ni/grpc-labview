@@ -12,16 +12,14 @@ jobs:
     runs-on: windows-2019
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: ilammy/msvc-dev-cmd@v1.4.1
+    - uses: actions/checkout@v4
+    - uses: ilammy/msvc-dev-cmd@v1.13.0
       with:
         arch: x86
+        sdk: 10.0.22621.0
+        vsversion: 16.0
+
     - uses: ilammy/setup-nasm@v1
-    
-    - uses: actions/checkout@v4
-    - uses: GuillaumeFalourd/setup-windows10-sdk-action@v2
-      with:
-        sdk-version: 22621
     
     - name: Update Submodules
       working-directory: ${{runner.workspace}}/grpc-labview      
