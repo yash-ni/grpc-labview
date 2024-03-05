@@ -284,7 +284,7 @@ namespace grpc_labview {
     {
         if (metadata->isRepeated)
         {
-            auto repeatedString = static_cast<const LVRepeatedMessageValue<std::string>&>(*value);
+            auto repeatedString = static_cast<const LVRepeatedStringMessageValue&>(*value);
             if (repeatedString._value.size() != 0)
             {
                 NumericArrayResize(0x08, 1, start, repeatedString._value.size());
@@ -681,13 +681,14 @@ namespace grpc_labview {
             auto array = *(LV1DArrayHandle*)start;
             if (array && *array && ((*array)->cnt != 0))
             {
-                auto repeatedStringValue = std::make_shared<LVRepeatedMessageValue<std::string>>(metadata->protobufIndex);
+                auto repeatedStringValue = std::make_shared<LVRepeatedStringMessageValue>(metadata->protobufIndex);
                 message._values.emplace(metadata->protobufIndex, repeatedStringValue);
                 auto lvStr = (*array)->bytes<LStrHandle>();
                 for (int x = 0; x < (*array)->cnt; ++x)
                 {
                     auto str = GetLVString(*lvStr);
-                    repeatedStringValue->_value.Add(str);
+                    // repeatedStringValue->_value.Add(&str);
+                    repeatedStringValue->_value.Add()->assign(str);
                     lvStr += 1;
                 }
             }

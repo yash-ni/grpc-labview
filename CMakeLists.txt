@@ -1,6 +1,6 @@
 #----------------------------------------------------------------------
 #----------------------------------------------------------------------
-cmake_minimum_required(VERSION 3.5.1)
+cmake_minimum_required(VERSION 3.15)
 
 cmake_policy(SET CMP0091 NEW)
 
@@ -16,6 +16,20 @@ else()
   add_link_options("$<$<NOT:$<CONFIG:Debug>>:/DEBUG>")
   add_link_options("$<$<NOT:$<CONFIG:Debug>>:/OPT:REF>")
   add_link_options("$<$<NOT:$<CONFIG:Debug>>:/OPT:ICF>")
+endif()
+
+# set(protobuf_INSTALL OFF)
+# set(utf8_range_ENABLE_INSTALL OFF)
+set(ABSL_ENABLE_INSTALL ON)
+
+message(STATUS "Modifying Protobuf's CMakeLists.txt ...")
+execute_process(
+    COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/modifyProtobufCMakeLists.py
+    RESULT_VARIABLE modify_command_result
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
+if(modify_command_result)
+    message(FATAL_ERROR "Failed to run the configure script. Aborting configuration.")
 endif()
 
 find_package(Threads REQUIRED)
